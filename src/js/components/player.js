@@ -1,8 +1,7 @@
 import React from 'react'
 
-const Player = ({ items, selected, onKey, replaceTitle }) => {
-    let data = items.data,
-        curVideo
+const Player = ({ data, selected, onKey, replaceTitle }) => {
+    let curVideo
 
     data.map((item) => {
         if (item.id === selected) {

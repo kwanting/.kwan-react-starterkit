@@ -3,12 +3,11 @@ import CarouselItem from './carouselItem'
 
 const MAX_SHOWN = 5
 
-const Carousel = ({ items, selected, clickEvt, onKey }) => {
-    let data = items.data,
-        focusId = selected ? selected : 0,
+const Carousel = ({ data, selected, clickEvt, onKey }) => {
+    let focusId = selected ? selected : 0,
         carousel
 
-    if (data) {
+    if (data.length > 0) {
         carousel = data.map(item => {
             let id = Math.abs(item.id)
 

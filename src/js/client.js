@@ -66,10 +66,26 @@ class App extends React.Component {
 
     componentDidMount() {
         console.info("mounted")
+        this.formatData()
     }
 
     componentWillUnmount() {
         document.removeEventListener("keydown", this.keyHandler, false)
+    }
+
+    // Lets us define how to format the master data
+    // Can add more logic here to remove responsibility from components
+    formatData = () => {
+        let data = this.state.data.data,
+            dataArray = []
+
+        data.map(item => {
+            dataArray.push(item)
+        })
+
+        this.setState({
+            data: dataArray
+        })
     }
 
     callApi = opts => {
@@ -118,7 +134,7 @@ class App extends React.Component {
             tarId = currId + direction,
             maxLength = this.state.data.data.length
 
-        console.error("currId: " + currId + " tarId: " + tarId + " maxLength: " + maxLength)
+        // console.error("currId: " + currId + " tarId: " + tarId + " maxLength: " + maxLength)
 
         if (tarId >= 0 && tarId < maxLength) {
             this.setState({ selectedId: tarId })
@@ -153,12 +169,12 @@ class App extends React.Component {
 
     render() {
         let carouselComponent = <Carousel
-            items={this.state && this.state.data}
+            data={this.state && this.state.data}
             selected={this.state && this.state.selectedId}
             onKey={this.clickEvt}
             />
         let playerComponent = <Player
-            items={this.state && this.state.data}
+            data={this.state && this.state.data}
             selected={this.state && this.state.selectedId}
             onKey={this.clickEvt}
             />
