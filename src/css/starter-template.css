@@ -1,6 +1,27 @@
 body {
   padding-top: 50px;
+  background: lightgray;
 }
+
+.carouselItem {
+  background: white;
+  border: solid 3px black;
+  width: 100px;
+  height: 200px;
+  margin: 5px;
+  float: left;
+  text-align: center;
+}
+
+.carouselItem.focused {
+  border: solid 3px red;
+}
+
+.carouselImg {
+  width: 90px;
+  margin: 0 4px;
+}
+
 .starter-template {
   padding: 40px 15px;
   text-align: center;
