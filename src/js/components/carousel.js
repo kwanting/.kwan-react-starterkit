@@ -8,10 +8,12 @@ const Carousel = ({ data, selected, clickEvt, onKey }) => {
         carousel
 
     if (data && data.length > 0) {
+        let firstId
         carousel = data.map(item => {
             let id = Math.abs(item.id)
+            if (!firstId) firstId = id + 5
 
-            if (id < MAX_SHOWN) {
+            if (id < firstId) {
                 return <CarouselItem
                     key={id}
                     selected={id === focusId}

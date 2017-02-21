@@ -3,42 +3,13 @@ import ReactDom from 'react-dom'
 import Header from './header'
 import Carousel from './components/carousel'
 import Player from './components/player'
+import testData from './testData/testData'
+import FizzBuzz from './fizzbuzz'
 
 const API_URL = "http://172.18.0.137/xdk2/data.php",
     TITLE = "React Test",
     HOME_PAGE = "HOME_PAGE_VARIABLE",
     PLAYER_PAGE = "PLAYER_PAGE_VARIABLE"
-
-const getFilmData = () => {
-    return [{
-        id: 0,
-        title: "Avatar",
-        img: "http://i.imgur.com/gjUfHJk.jpg",
-        url: "http://html5demos.com/assets/dizzy.mp4"
-    }, {
-        id: 1,
-        title: "Cloudy With a Chance of Meatballs",
-        img: "http://i.imgur.com/dinL3sk.jpg",
-        url: "https://www.w3schools.com/html/mov_bbb.mp4"
-    }, {
-        id: 2,
-        title: "Ex Machina",
-        img: "http://i.imgur.com/Zw8NFc6.jpg",
-        url: "http://techslides.com/demos/sample-videos/small.mp4"
-    }, {
-        id: 3,
-        title: "Star Wars: The Last Jedi",
-        img: "http://i.imgur.com/MWWaKUP.jpg"
-    }, {
-        id: 4,
-        title: "Transformers",
-        img: "http://i.imgur.com/029a4jS.jpg"
-    }, {
-        id: 5,
-        title: "Inception",
-        img: "http://i.imgur.com/hskItlg.jpg"
-    }]
-}
 
 class App extends React.Component {
     constructor() {
@@ -46,18 +17,22 @@ class App extends React.Component {
         this.state = {
             title: TITLE,
             page: HOME_PAGE, // The view.
-            data: getFilmData(),
-            selectedId: 0
+            data: testData(),
+            selectedId: 0,
+            startIndex: 0,
+            totalData: 0
         }
+
+        console.error(testData)
     }
 
     componentWillMount() {
         console.info("mounting")
 
-        this.callApi({
-            startIndex: 0,
-            pageSize: 5
-        })
+        // this.callApi({
+        //     startIndex: 0,
+        //     pageSize: 5
+        // })
 
         document.addEventListener("keydown", this.keyHandler, false)
     }
@@ -93,6 +68,8 @@ class App extends React.Component {
             })
 
             this.setState({
+                startIndex: response.startIndex,
+                totalData: response.total,
                 data: returnArray
             })
         }).bind(this))
@@ -124,11 +101,20 @@ class App extends React.Component {
 
         let currId = this.state.selectedId,
             tarId = currId + direction,
-            maxLength = this.state.data.length
+            minLength = this.state.startIndex,
+            maxLength = this.state.startIndex + 5,
+            total = this.state.totalData-1,
+            conflict = tarId < 0 || tarId > total
 
-        // console.error("currId: " + currId + " tarId: " + tarId + " maxLength: " + maxLength)
+        console.error("currId: " + currId + " tarId: " + tarId + " min:" + minLength + " max:" + maxLength + " total:" + total)
 
-        if (tarId >= 0 && tarId < maxLength) {
+        if (!conflict) {
+            if (tarId > maxLength || tarId < minLength) {
+                this.callApi({
+                    startIndex: tarId,
+                    pageSize: 5
+                })
+            }
             this.setState({ selectedId: tarId })
         }
     }
@@ -185,6 +171,7 @@ class App extends React.Component {
 ReactDom.render(
     <div>
         <App />
+        {/*<FizzBuzz />*/}
     </div>,
     document.getElementById("app")
 )
