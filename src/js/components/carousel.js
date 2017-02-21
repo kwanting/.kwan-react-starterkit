@@ -7,7 +7,7 @@ const Carousel = ({ data, selected, clickEvt, onKey }) => {
     let focusId = selected ? selected : 0,
         carousel
 
-    if (data.length > 0) {
+    if (data && data.length > 0) {
         carousel = data.map(item => {
             let id = Math.abs(item.id)
 

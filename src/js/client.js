@@ -10,36 +10,34 @@ const API_URL = "http://172.18.0.137/xdk2/data.php",
     PLAYER_PAGE = "PLAYER_PAGE_VARIABLE"
 
 const getFilmData = () => {
-    return {
-        data: [{
-            id: 0,
-            title: "Avatar",
-            img: "http://i.imgur.com/gjUfHJk.jpg",
-            url: "http://html5demos.com/assets/dizzy.mp4"
-        }, {
-            id: 1,
-            title: "Cloudy With a Chance of Meatballs",
-            img: "http://i.imgur.com/dinL3sk.jpg",
-            url: "https://www.w3schools.com/html/mov_bbb.mp4"
-        }, {
-            id: 2,
-            title: "Ex Machina",
-            img: "http://i.imgur.com/Zw8NFc6.jpg",
-            url: "http://techslides.com/demos/sample-videos/small.mp4"
-        }, {
-            id: 3,
-            title: "Star Wars: The Last Jedi",
-            img: "http://i.imgur.com/MWWaKUP.jpg"
-        }, {
-            id: 4,
-            title: "Transformers",
-            img: "http://i.imgur.com/029a4jS.jpg"
-        }, {
-            id: 5,
-            title: "Inception",
-            img: "http://i.imgur.com/hskItlg.jpg"
-        }]
-    }
+    return [{
+        id: 0,
+        title: "Avatar",
+        img: "http://i.imgur.com/gjUfHJk.jpg",
+        url: "http://html5demos.com/assets/dizzy.mp4"
+    }, {
+        id: 1,
+        title: "Cloudy With a Chance of Meatballs",
+        img: "http://i.imgur.com/dinL3sk.jpg",
+        url: "https://www.w3schools.com/html/mov_bbb.mp4"
+    }, {
+        id: 2,
+        title: "Ex Machina",
+        img: "http://i.imgur.com/Zw8NFc6.jpg",
+        url: "http://techslides.com/demos/sample-videos/small.mp4"
+    }, {
+        id: 3,
+        title: "Star Wars: The Last Jedi",
+        img: "http://i.imgur.com/MWWaKUP.jpg"
+    }, {
+        id: 4,
+        title: "Transformers",
+        img: "http://i.imgur.com/029a4jS.jpg"
+    }, {
+        id: 5,
+        title: "Inception",
+        img: "http://i.imgur.com/hskItlg.jpg"
+    }]
 }
 
 class App extends React.Component {
@@ -56,36 +54,20 @@ class App extends React.Component {
     componentWillMount() {
         console.info("mounting")
 
-        // this.callApi({
-        // 	startIndex: 0,
-        // 	pageSize: 5
-        // })
+        this.callApi({
+            startIndex: 0,
+            pageSize: 5
+        })
 
         document.addEventListener("keydown", this.keyHandler, false)
     }
 
     componentDidMount() {
         console.info("mounted")
-        this.formatData()
     }
 
     componentWillUnmount() {
         document.removeEventListener("keydown", this.keyHandler, false)
-    }
-
-    // Lets us define how to format the master data
-    // Can add more logic here to remove responsibility from components
-    formatData = () => {
-        let data = this.state.data.data,
-            dataArray = []
-
-        data.map(item => {
-            dataArray.push(item)
-        })
-
-        this.setState({
-            data: dataArray
-        })
     }
 
     callApi = opts => {
@@ -99,13 +81,19 @@ class App extends React.Component {
             appendUrl(key + "=" + opts[key])
         }
 
-        fetch(API_URL).then((request) => {
-            console.error("request", request.json())
+        fetch(url).then((request) => {
             return request.json()
         }).then((response => {
-            console.error("response", response)
+            let data = response.data,
+                returnArray = []
+
+            data.map(item => {
+                item.id = Math.abs(item.id)
+                returnArray.push(item)
+            })
+
             this.setState({
-                data: response
+                data: returnArray
             })
         }).bind(this))
     }
@@ -130,9 +118,13 @@ class App extends React.Component {
     }
 
     focusHandler = direction => {
+        if (!this.state.data) {
+            return
+        }
+
         let currId = this.state.selectedId,
             tarId = currId + direction,
-            maxLength = this.state.data.data.length
+            maxLength = this.state.data.length
 
         // console.error("currId: " + currId + " tarId: " + tarId + " maxLength: " + maxLength)
 
