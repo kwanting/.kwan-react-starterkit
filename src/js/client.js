@@ -1,5 +1,7 @@
 import React from 'react'
 import ReactDom from 'react-dom'
+import { Router, Route, IndexRoute, hashHistory } from 'react-router'
+
 import Header from './header'
 import Carousel from './components/carousel'
 import Player from './components/player'
@@ -22,17 +24,15 @@ class App extends React.Component {
             startIndex: 0,
             totalData: 0
         }
-
-        console.error(testData)
     }
 
     componentWillMount() {
         console.info("mounting")
 
-        // this.callApi({
-        //     startIndex: 0,
-        //     pageSize: 5
-        // })
+        this.callApi({
+            startIndex: 0,
+            pageSize: 5
+        })
 
         document.addEventListener("keydown", this.keyHandler, false)
     }
@@ -102,11 +102,11 @@ class App extends React.Component {
         let currId = this.state.selectedId,
             tarId = currId + direction,
             minLength = this.state.startIndex,
-            maxLength = this.state.startIndex + 5,
+            maxLength = this.state.startIndex + 4,
             total = this.state.totalData-1,
             conflict = tarId < 0 || tarId > total
 
-        console.error("currId: " + currId + " tarId: " + tarId + " min:" + minLength + " max:" + maxLength + " total:" + total)
+        console.error("currId:" + currId + " tarId:" + tarId + " min:" + minLength + " max:" + maxLength + " total:" + total)
 
         if (!conflict) {
             if (tarId > maxLength || tarId < minLength) {
@@ -157,7 +157,13 @@ class App extends React.Component {
             onKey={this.clickEvt}
             />
 
-        let component = this.state.page === HOME_PAGE ? carouselComponent : playerComponent
+        let component = React.cloneElement(this.props.children, {
+            data: this.state && this.state.data,
+            selected: this.state && this.state.selectedId,
+            onKey: this.clickEvt
+        })
+
+        // this.state.page === HOME_PAGE ? carouselComponent : playerComponent
 
         return (
             <div>
@@ -169,9 +175,12 @@ class App extends React.Component {
 }
 
 ReactDom.render(
-    <div>
-        <App />
-        {/*<FizzBuzz />*/}
-    </div>,
+    <Router history={hashHistory}>
+        <Route path="/" component={FizzBuzz}></Route>
+            <Route path="/" component={App}>
+                <IndexRoute component={Carousel}></IndexRoute>
+                <Route path="/video/(:id)" component={Player}></Route>
+            </Route>
+    </Router>,
     document.getElementById("app")
 )
